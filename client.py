@@ -1,10 +1,10 @@
 import os
 import requests
 
-#dirección del namenode
+
 namenode_url = 'http://localhost:6000'
 
-# direcciones de cada datanode
+
 datanode_urls = [
     'http://localhost:6001',
     'http://localhost:6002',
@@ -12,7 +12,7 @@ datanode_urls = [
     'http://localhost:6004'
 ]
 
-#Tamaño de cada bloque
+
 BLOCK_SIZE = 1024
 
 def upload_file(filename):
@@ -22,7 +22,7 @@ def upload_file(filename):
 
     file_basename = os.path.basename(filename)
     blocks = []
-    datanode_block_map = {}  #Mapeo de cada bloque a su datanode
+    datanode_block_map = {}  
 
     with open(filename, 'rb') as f:
         block_number = 0
@@ -34,22 +34,22 @@ def upload_file(filename):
             block_id = f"{file_basename}_block_{block_number}"
             blocks.append(block_id)
 
-            # Seleccionar dos datanodes para la replicación
+           
             index1 = block_number % len(datanode_urls)
             index2 = (index1 + 1) % len(datanode_urls)
 
             datanode_url_1 = datanode_urls[index1]
             datanode_url_2 = datanode_urls[index2]
 
-            # Subir el bloque a ambos DataNodes
+           
             upload_block([datanode_url_1, datanode_url_2], block_id, block_data)
 
-            # Guardar los DataNodes donde se almacenan los bloques
+            
             datanode_block_map[block_id] = [datanode_url_1, datanode_url_2]
 
             block_number += 1
 
-    # Registrar el archivo en el NameNode
+    
     register_file_in_namenode(file_basename, blocks, datanode_block_map)
 
 def upload_block(datanode_urls, block_id, block_data):
@@ -70,7 +70,6 @@ def register_file_in_namenode(filename, blocks, datanode_block_map):
 
 
 def download_file(filename):
-    # Obtener la información del archivo desde el NameNode
     response = requests.get(f'{namenode_url}/fileinfo/{filename}')
     file_info = response.json()
 
@@ -81,14 +80,11 @@ def download_file(filename):
     blocks = file_info['blocks']
     datanodes = file_info['datanodes']
 
-    # Abrimos un archivo local para escribir los bloques descargados
     with open(f'downloaded_{filename}', 'wb') as f:
         for block_id in blocks:
-            # Obtenemos la lista de DataNodes para este bloque
             datanode_urls = datanodes[block_id]
             
             block_data = None
-            # Intentamos descargar el bloque desde uno de los DataNodes
             for datanode_url in datanode_urls:
                 try:
                     block_response = requests.get(f'{datanode_url}/getblock/{block_id}')
@@ -100,19 +96,16 @@ def download_file(filename):
                 except requests.exceptions.RequestException as e:
                     print(f"Error al descargar el bloque {block_id} desde {datanode_url}: {e}")
 
-            # Si se descargó correctamente, escribimos el bloque en el archivo
             if block_data:
                 f.write(bytes.fromhex(block_data))
             else:
                 print(f"Error: no se pudo descargar el bloque {block_id} desde ningún DataNode.")
 
 
-# Función para listar archivos (ls)
 def list_files():
     response = requests.get(f'{namenode_url}/list')
     print("Archivos en el sistema:", response.json())
 
-# Definir los comandos del CLI
 def execute_command(command):
     if command.startswith('put '):
         filename = command.split(' ')[1]
