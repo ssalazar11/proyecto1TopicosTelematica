@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Acá se guarda la información de los archivos.
 files = {}
 
 @app.route('/register', methods=['POST'])
@@ -13,7 +12,6 @@ def register_file():
     blocks = data['blocks']
     datanodes = data['datanodes']
     
-    # Guardar la información del archivo.
     files[filename] = {'blocks': blocks, 'datanodes': datanodes}
     return jsonify({'message': f'File {filename} registered successfully'}), 200
 
@@ -29,5 +27,5 @@ def list_files():
     return jsonify(list(files.keys())), 200
 
 if __name__ == '__main__':
-    inputPort = int(input("Introduce el puerto: ")) # 6001 - 6004
+    inputPort = int(input("Introduce el puerto: ")) 
     app.run(host='0.0.0.0', port=inputPort)
