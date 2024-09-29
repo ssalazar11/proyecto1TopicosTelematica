@@ -9,7 +9,6 @@ datanode_urls = [
     'http://localhost:6001',
     'http://localhost:6002',
     'http://localhost:6003',
-    'http://localhost:6004'
 ]
 
 
