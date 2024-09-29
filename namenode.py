@@ -29,4 +29,5 @@ def list_files():
     return jsonify(list(files.keys())), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=6000)
+    inputPort = int(input("Introduce el puerto: ")) # 6001 - 6004
+    app.run(host='0.0.0.0', port=inputPort)
