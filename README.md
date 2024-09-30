@@ -1,4 +1,7 @@
 # Sistema de Archivos Distribuidos
+`El marco teorico se encuentra en la wiki del repositorio`
+Realizado por:
+Juan Sebastián Camacho, Samuel Salazar, Pablo Moreno.
 
 ## Descripción
 
